@@ -5,6 +5,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.GET;
@@ -29,13 +30,17 @@ public class ProdutoResource {
         description = "Produto cadastrado com sucesso!"
     )
     @APIResponse(
+        responseCode = "400",
+        description = "Requisição com dados em inconformidade!"
+    )
+    @APIResponse(
         responseCode = "500",
         description = "Erro inesperado!"
     )
     @Transactional
     @POST
     @Path("/produto")
-    public Response criarProduto(ProdutoDTO produtoDTO) {
+    public Response criarProduto(@Valid ProdutoDTO produtoDTO) {
         Produto produto = new Produto(
             produtoDTO.getNome(),
             produtoDTO.getDescricao(),
@@ -131,6 +136,10 @@ public class ProdutoResource {
         description = "Produto atualizado com sucesso!"
     )
     @APIResponse(
+        responseCode = "400",
+        description = "Requisição com dados em inconformidade!"
+    )
+    @APIResponse(
         responseCode = "404",
         description = "Produto não encontrado!"
     )
@@ -141,7 +150,7 @@ public class ProdutoResource {
     @Transactional
     @PUT
     @Path("/produto/{id}")
-    public Response atualizarProduto(@PathParam("id") Long id, ProdutoDTO produtoDTO) {
+    public Response atualizarProduto(@Valid @PathParam("id") Long id, ProdutoDTO produtoDTO) {
         Produto produto = Produto.findById(id);
 
         if (produto == null) 
